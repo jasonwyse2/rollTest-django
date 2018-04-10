@@ -1,0 +1,133 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Highstock Example</title>
+
+		<style type="text/css">
+
+		</style>
+	</head>
+	<body>
+
+
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+
+<div id="container" style="height: 400px; min-width: 500px"></div>
+<div class="info"> </div>
+<script type="text/css">
+.info {
+    font: 0.7em sans-serif;
+    padding: 0.5em;
+    margin: 0.5em;
+    background: #FCFFC5;
+    border-radius: 0.5em;
+    border: 1px solid gray;
+}
+.info:before {
+    content: 'i';
+    margin: 0.5em;
+    font: 1.5em serif bold;
+    font-style: italic;
+    color: green;
+}
+		</script>
+
+<script type="text/javascript">
+
+    var context = {{ context|safe }}
+    time_close = context['time_close']
+    bottom_data = context['bottom_data']
+    up_data = context['up_data']
+    top_data = context['top_data']
+    down_data = context['down_data']
+    // Create the chart
+    Highcharts.stockChart('container', {
+
+        rangeSelector: {
+            selected: 1
+        },
+
+        title: {
+            text: 'Stock Minute Price'
+        },
+
+        series: [{
+        name: 'bottom points',
+        id: 'bottom',
+        color: 'green',
+        data: bottom_data,
+        marker: {
+                enabled: true,
+                radius: 3
+            },
+            shadow: true,
+            tooltip: {
+                valueDecimals: 2
+            }
+    }, {
+        name: 'up points',
+        id: 'up',
+        color: 'violet',
+        data: up_data,
+        marker: {
+                enabled: true,
+                radius: 3
+            },
+            shadow: true,
+            tooltip: {
+                valueDecimals: 2
+            }
+    },{
+        name: 'top points',
+        id: 'top',
+        color: 'red',
+        data: top_data,
+        marker: {
+                enabled: true,
+                radius: 3
+            },
+            shadow: true,
+            tooltip: {
+                valueDecimals: 2
+            }
+    },{
+        name: 'down points',
+        id: 'down',
+        color: 'lightgreen',
+        data: down_data,
+        marker: {
+                enabled: true,
+                radius: 3
+            },
+            shadow: true,
+            tooltip: {
+                valueDecimals: 2
+            }
+    }
+    ]
+
+        <!--series: [{-->
+            <!--name: 'Stock Minute Price',-->
+            <!--data: time_close,-->
+            <!--marker: {-->
+                <!--enabled: true,-->
+                <!--radius: 3-->
+            <!--},-->
+            <!--shadow: true,-->
+            <!--tooltip: {-->
+                <!--valueDecimals: 2-->
+            <!--}-->
+        <!--}]-->
+    });
+		</script>
+	</body>
+</html>
+
+
+
+
+

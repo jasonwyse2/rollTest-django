@@ -1,0 +1,158 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Intraday Minute</title>
+
+		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+		<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>-->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+		<link rel="stylesheet" href="/static/css/customCss.css" >
+
+		<style type="text/css">
+
+		</style>
+	</head>
+	<body>
+
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/stock/indicators/indicators.js"></script>
+
+<div class="container">
+	<div class="row clearfix">
+		<div class="col-md-12 text-center">
+			<div class="page-header">
+				<h1>
+					Intraday Minute Prediction
+				</h1>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container custom-container-width">
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+				<div class="row">
+					<div class="form-group col-md-2">
+					 	<label for="Underlying">Underlying</label>
+						<input type="text" name="underlying" value="000016" class="form-control" id="underlying"  />
+					</div>
+					<div class="form-group col-md-2">
+
+						<label class="" >Task Type</label>
+						  <select class="custom-select" id="taskTypeSelect">
+							  <option value="BottomTopUpDown">BottomTopUpDown</option>
+							  <option value="SharpGentleUpDown">SharpGentleUpDown</option>
+						  </select>
+					</div>
+					<div class="form-group col-md-2">
+
+						<label class="" >Model Type</label>
+						  <select class="custom-select" id="modelTypeSelect">
+							  <option value="NeuralNetwork">Neural Network</option>
+							  <option value="Xgboost">Xgboost</option>
+						  </select>
+					</div>
+
+					<div class="form-group col-md-2">
+
+						<label class="" >Indicator Combination</label>
+						  <select class="custom-select" id="IndicatorCombSelect">
+							  <option value="MinuteComb1">MinuteComb1</option>
+							  <option value="MinuteComb2">MinuteComb2</option>
+						  </select>
+					</div>
+
+					<div class="form-group col-md-3">
+
+						<label class="" >Model Training Range</label>
+
+					  <select class="custom-select" id="modelSelect">
+					  </select>
+					</div>
+					<div class="form-group col-md-3">
+						<label for="date">Predict Date</label>
+						<input type="date" name="date" value="2018-03-23" class="form-control" id="date" />
+					</div>
+
+					<!--<div class="input-group mb-3">-->
+
+					<!--</div>-->
+
+
+				</div>
+				 <button type="submit" id="button" class="btn btn-default">Submit</button>
+		</div>
+	</div>
+</div>
+
+<div id="container" class='' style="height:600px"></div>
+
+<!--style="height: 400px; min-width: 310px"-->
+
+<script src="/static/js/tool.js"></script>
+<script src="/static/js/intraday_minute.js"></script>
+<script type="text/javascript">
+<!--$("input").each(function(){-->
+	<!--alert($(this).val())-->
+<!--})-->
+<!--alert(input_value_list)-->
+function update_modelNames_by_underlying(event){
+	underlying = $('#underlying').val()
+	 $.ajax({
+			type:"POST",
+			data:{'underlying':underlying},
+			dataType:"json",
+			url:"{% url "IntradayModelName" %}",
+			success:function(data){
+				modelNames = data['modelNames']
+				update_modelOptions(modelNames)
+			}
+		});
+}
+
+data = {{data|safe}}
+init_page(data)
+underlying = $('#underlying').val()
+<!--alert(underlying)-->
+$(document).ready(function(){
+	$.ajaxSetup({
+                 data: {csrfmiddlewaretoken: '{{ csrf_token }}' }
+            });
+	$('#button').click(function() {
+		submit_parameters = get_submit_parameter()
+		highcharts_parameters = {'underlying':underlying,'date':date}
+		$.ajax({
+			type:"POST",
+			data:submit_parameters,
+			dataType:"json",
+			url:"{% url "IntradayMinutePrediction" %}",
+			success:function(data){
+				draw_intraday_minute(data,highcharts_parameters)
+			}
+		});
+	});
+	<!--$('#underlying').blur(update_modelNames_by_underlying)-->
+	$('#underlying').keydown(function(event){
+	<!--event.Code equals 13 means 'enter' key is pressed-->
+		if(event.keyCode == 13){
+			update_modelNames_by_underlying()
+		}
+	});
+})
+
+
+
+		</script>
+	</body>
+</html>
+
+
+
+
+
